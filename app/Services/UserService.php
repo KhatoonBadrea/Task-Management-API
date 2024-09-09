@@ -32,6 +32,8 @@ class UserService
         }
     }
 
+    //========================================create_user===================================
+
     /**
      * create new user
      * @param array $data
@@ -45,7 +47,7 @@ class UserService
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make($data['password']),
+                'password' => $data['password'],
             ]);
 
             // Check if the user was created successfully
@@ -59,6 +61,9 @@ class UserService
             return $this->errorResponse('An error occurred: ' . 'there is an error in the server', 500);
         }
     }
+
+
+    //========================================getUserById===================================
 
     /**
      * show the user information
@@ -81,6 +86,9 @@ class UserService
             return $this->errorResponse('An error occurred: ' . $e->getMessage(), [], 500);
         }
     }
+
+    //========================================updateUser===================================
+
 
     /**
      * update the user information
@@ -116,6 +124,9 @@ class UserService
         }
     }
 
+
+    //========================================deleteUser===================================
+
     /**
      * delete the user
      * @param $id
@@ -128,9 +139,11 @@ class UserService
             //check if the user is exists
             $user = User::find($id);
 
-            if (!$user) {
-                return false;
+            if (!$user->exists) {
+
+                return $this->notFound('user not found');
             }
+
 
             // delete the user
             $user->delete();

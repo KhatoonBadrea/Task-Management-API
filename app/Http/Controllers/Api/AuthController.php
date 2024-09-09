@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     use ApiResponseTrait;
 
-    protected $authService;
+    protected $authService; 
 
     public function __construct(AuthService $authService)
     {
@@ -23,9 +23,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $result = $this->authService->login($request->validated());
-        if (isset($result['error'])) {
-            return response()->json($result, $result['status']);
-        }
+       
         return response()->json($result);
     }
 

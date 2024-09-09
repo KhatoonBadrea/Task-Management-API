@@ -21,11 +21,36 @@ class StoreTaskRequest extends FormRequest
         $dueDate = $this->input('due_date');
         $deadline = $this->input('deadline');
 
+        if ($dueDate) {
+            try {
+                $dueDate = Carbon::createFromFormat('d-m-Y H:i', $dueDate);
+            } catch (\Exception $e) {
+                throw new HttpResponseException(response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid due_date format.',
+                    'errors' => ['due_date' => 'The due_date must match the format d-m-Y H:i.']
+                ]));
+            }
+        }
+
+        if ($deadline) {
+            try {
+                $deadline = Carbon::createFromFormat('d-m-Y H:i', $deadline);
+            } catch (\Exception $e) {
+                throw new HttpResponseException(response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid deadline format.',
+                    'errors' => ['deadline' => 'The deadline must match the format d-m-Y H:i.']
+                ]));
+            }
+        }
+
         $this->merge([
-            'due_date' => $dueDate ? Carbon::parse($dueDate)->format('Y-m-d') : null, // السماح بأن تكون due_date فارغة
-            'deadline' => $deadline ? Carbon::parse($deadline)->format('Y-m-d') : null,
+            'due_date' => $dueDate ? $dueDate->format('d-m-Y H:i') : null, 
+            'deadline' => $deadline ? $deadline->format('d-m-Y H:i') : null,
         ]);
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -37,8 +62,7 @@ class StoreTaskRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'priority' => 'required|string|in:height,low,medium',
-            'due_date' => 'nullable|date|arter:now',
-            'status' => 'required|string|in:pending,done,in-progress',
+            'due_date' => 'nullable|date|after:now',
             'assigned_to' => 'required|integer|exists:users,id',
             'deadline' => 'required|date|after:now',
         ];
@@ -62,11 +86,10 @@ class StoreTaskRequest extends FormRequest
             'description' => 'description',
             'priority' => 'priority',
             'due_date' => 'due_date',
-            'status' => 'status',
             'assigned_to' => 'assigned_to',
             'deadline' => 'deadline',
         ];
-    }
+    } 
     public function messages()
     {
         return [

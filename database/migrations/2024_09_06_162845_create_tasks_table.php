@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('deadline');
             $table->enum('status', ['in-progress', 'done', 'pending']);
             $table->foreignId('assigned_to')->constrained('users', 'id');
+            $table->foreignId('owner_id')->constrained('users', 'id');
             $table->timestamp('created_on')->nullable();
             $table->timestamp('updated_on')->nullable();
 

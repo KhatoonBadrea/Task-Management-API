@@ -20,8 +20,9 @@ class TaskResource extends JsonResource
             'priority' => $this->priority,
             'due_date' => $this->due_date,
             'status' => $this->status,
-            'assigned_to' => new UserResource($this->user),
             'deadline' => $this->deadline,
+            'assigned_to' => new UserResource($this->user),
+            'owner_id' => new UserResource($this->owner),
         ];
     }
 }
